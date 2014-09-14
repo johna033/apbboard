@@ -5,6 +5,7 @@ import com.xit.apbboard.dao.BulletinsDAO;
 import com.xit.apbboard.dao.PricesDAO;
 import com.xit.apbboard.model.Price;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +32,9 @@ public class BulletinsController {
 
     @RequestMapping(value="/prices", method = RequestMethod.GET)
     public List<Price> getPriceList(){
+
         return pricesDAO.getPriceList();
+
     }
 
     @RequestMapping(value="/bulletins", method = RequestMethod.GET)

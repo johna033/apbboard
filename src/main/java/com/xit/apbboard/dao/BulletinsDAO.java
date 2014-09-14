@@ -22,19 +22,19 @@ public class BulletinsDAO {
     @Autowired
     public NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public void addBulletin(Bulletin bulletin){
+    public void add(Bulletin bulletin){
         HashMap<String, Object> params = new HashMap<>();
         params.put("bulletinTitle", bulletin.bulletinTitle);
         params.put("bulletinText", bulletin.bulletidText);
-
-        namedParameterJdbcTemplate.update("insert into bulletins bulletintitle, bulletintext, reviewed, expirationDate values(:bulletinTitle, :bulletinText, false, -1)", params);
+        params.put("uuid", bulletin.uuid);
+        namedParameterJdbcTemplate.update("insert into bulletins (bulletintitle, bulletintext, reviewed, expirationDate, uuid, posted) values(:bulletinTitle, :bulletinText, false, -1, :uuid, false)", params);
     }
 
     public List<BulletinResponse> getPartialList(int size, int offset){
         HashMap<String, Object> params = new HashMap<>();
         params.put("size", size);
         params.put("offset", offset);
-        return namedParameterJdbcTemplate.query("select bulletintitle, bulletintext from bulletins where reviewed=true order by bulletins.expirationDate desc limit :size, :offset", params, new BulletinResponseMapper());
+        return namedParameterJdbcTemplate.query("select bulletintitle, bulletintext from bulletins where posted=true order by bulletins.expirationDate desc limit :size, :offset", params, new BulletinResponseMapper());
     }
 
     public int countBulletins(){

@@ -13,7 +13,7 @@ public class AdminUsersResponse {
     public String title;
     public String text;
     public boolean reviewed;
-    public boolean post;
+    public boolean posted;
     public double reward;
     public boolean rewardSent;
 }

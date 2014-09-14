@@ -10,4 +10,6 @@ public class PaymentRequest {
     public String email;
     public double payment;
     public int numberOfSymbols;
+    public String text;
+    public String title;
 }

@@ -29,7 +29,7 @@ public class BoardUsersDAO {
         params.put("uuid", boardUser.uuid);
         params.put("time", boardUser.time);
         params.put("priceItem", boardUser.priceItem);
-        namedParameterJdbcTemplate.update("insert into boardusers email, uuid, rewardSent, creationTime, priceItem values (:email, :uuid, false, :time, :priceItem)",params);
+        namedParameterJdbcTemplate.update("insert into boardusers (email, uuid, rewardSent, creationTime, priceItem) values (:email, :uuid, false, :time, :priceItem)",params);
     }
 
     public List<AdminUsersResponse> getUsers(){

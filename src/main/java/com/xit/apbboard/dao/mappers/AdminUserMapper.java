@@ -24,7 +24,7 @@ public class AdminUserMapper implements RowMapper<AdminUsersResponse> {
         adminUsersResponse.title = rs.getString("bulletinTitle");
         adminUsersResponse.text = rs.getString("bulletinText");
         adminUsersResponse.reviewed = rs.getBoolean("reviewed");
-        adminUsersResponse.post = rs.getBoolean("posted");
+        adminUsersResponse.posted = rs.getBoolean("posted");
         adminUsersResponse.reward = rs.getDouble("priceInRUR");
         adminUsersResponse.rewardSent = rs.getBoolean("rewardSent");
         return adminUsersResponse;

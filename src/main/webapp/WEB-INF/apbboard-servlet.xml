@@ -4,13 +4,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
         http://www.springframework.org/schema/context
-	    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	    http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
 
     <context:annotation-config />
     <!-- Configure to plugin JSON as request and response in method handler -->
@@ -38,6 +41,30 @@
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg ref="dataSource"/>
     </bean>
+
+    <bean name="bcryptEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <security:http entry-point-ref="restAuthenticationEntryPoint">
+        <security:form-login authentication-failure-handler-ref="restAuthenticationFailureHandler" authentication-success-handler-ref="restAuthenticationSuccessHandler"/>
+        <security:logout logout-success-url="/admin.html/clients" />
+        <security:session-management>
+            <security:concurrency-control
+                    max-sessions="1"
+                    expired-url="/session/expired" />
+        </security:session-management>
+        <security:intercept-url pattern="/rest/admin/**" access="ROLE_ADMIN" />
+    </security:http>
+    <!-- <security:http pattern="/rest/oauth">
+
+     </security:http>
+ -->
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:password-encoder ref="bcryptEncoder"/>
+            <security:jdbc-user-service data-source-ref="dataSource"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
 
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

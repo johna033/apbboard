@@ -12,18 +12,24 @@ app.controller('postFormCtrl', function ($scope, $http) {
     $scope.paymentExpanded = function(){
         alert(isExpanded);
     };
+
     $scope.priceList = [];
     $http.get('/rest/prices').success(function(data){
         $scope.priceList = data;
         console.log(data);
     });
+
+    $scope.postBulletin = function(){
+        $http.post('/rest/paypal/pay', {email:$scope.email, payment:$scope.plan.price, numberOfSymbols:$scope.plan.amountOfSymbols, text:$scope.text, title:$scope.title});
+    };
+
     $scope.planChosen = false;
     $scope.hasReward = false;
     $scope.price = 0.00;
     $scope.selectedNewPlan = function(){
         resetForm();
         if($scope.plan != null){
-            $scope.planChosen = true
+            $scope.planChosen = true;
             $scope.hasReward = $scope.plan.reward;
             $scope.price = $scope.plan.price;
         } else {
@@ -39,11 +45,7 @@ app.controller('postFormCtrl', function ($scope, $http) {
     $scope.showSymbolCount = false;
     $scope.lengthControl = function(){
         $scope.showSymbolCount = true;
-        if($scope.text.length > $scope.plan.amountOfSymbols){
-            $scope.tooLongText = true;
-        } else {
-            $scope.tooLongText = false;
-        }
+        $scope.tooLongText = $scope.text.length > $scope.plan.amountOfSymbols;
         $scope.symbolsRemaining = $scope.plan.amountOfSymbols - $scope.text.length;
 
     };

@@ -1,0 +1,41 @@
+<div class="panel panel-default">
+    <div class="panel-heading">Recent clients view</div>
+    <div class="panel-body">
+        <div style="height: 200px; vertical-align: baseline; text-align: center;" ng-show="clients.length == 0">
+        <p style="font-size: 20pt; color: #CCCCCC;">No recent clients!<br/>Business is running slow!</p>
+        </div>
+        <table class="table table-bordered" ng-show="clients.length > 0">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Time</th>
+                <th>Email</th>
+                <th>Bulletin</th>
+                <th>Reward (RUR)</th>
+                <th>Send reward</th>
+                <th>Reviewed</th>
+                <th>Posted</th>
+                <th>Save</th>
+            </tr>
+            </thead>
+            <tbody ng-repeat="client in clients">
+            <tr>
+                <td>{{client.userId}}</td>
+                <td>{{client.time | date:'MM/dd/yyyy @ h:mma'}}</td>
+                <td>{{client.email}}</td>
+                <td><strong>{{client.title}}</strong>
+
+                    <p>{{client.text}}</p></td>
+                <td>
+                    {{client.reward}}
+                </td>
+                <td><a class="btn btn-primary btn-xs" ng-click="respondTo(request)" ng-disabled="client.rewardSent">Send
+                    reward</a></td>
+                <td><input type="checkbox" ng-model="client.reviewed">Reviewed</td>
+                <td><input type="checkbox" ng-model="client.posted">Posted</td>
+                <td><a class="btn btn-primary btn-xs" ng-click="respondTo(request)">Save</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

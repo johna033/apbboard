@@ -25,8 +25,10 @@ public class PricesDAO {
         return namedParameterJdbcTemplate.query("select * from prices", new HashMap<String, Object>(), new PriceRowMapper());
     }
 
-    public double getReward(int numberOfSymbols, double payment){
-        //int is
-        return 0;
+    public int getPriceItemId(int numberOfSymbols, double payment){
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("numberOfSymbols", numberOfSymbols);
+        params.put("payment", payment);
+        return namedParameterJdbcTemplate.queryForObject("select priceId from prices where amountofsymbols = :numberOfSymbols and price = :payment", params, Integer.class);
     }
 }

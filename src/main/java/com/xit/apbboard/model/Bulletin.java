@@ -12,4 +12,6 @@ public class Bulletin {
     public String bulletidText;
     public boolean reviewed;
     public long expirationDate;
+    public String uuid;
+    public boolean posted;
 }
