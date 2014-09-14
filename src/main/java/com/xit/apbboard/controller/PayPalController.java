@@ -10,11 +10,14 @@ import com.paypal.core.rest.PayPalRESTException;
 import com.sun.deploy.net.HttpResponse;
 import com.xit.apbboard.controller.dto.BaseResponse;
 import com.xit.apbboard.controller.dto.PaymentRequest;
+import com.xit.apbboard.exceptions.PayPalTransactException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,18 +29,26 @@ import java.util.UUID;
  * @since 14.09.14.
  */
 @RestController
+@RequestMapping("paypal")
 public class PayPalController {
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public BaseResponse payWithPayPal(@RequestBody PaymentRequest pr, HttpResponse httpResponse){
-
+    public BaseResponse payWithPayPal(@RequestBody PaymentRequest pr, HttpServletResponse httpResponse){
+        try{
+            createPayment(26.75, "uuid", "desc");
+        }catch(PayPalRESTException e){
+            throw new PayPalTransactException(e);
+        }
+        //httpResponse.sendRedirect("/");
         return new BaseResponse("No error");
     }
 
-    public static Payment createPayment(double orderAmount, String orderUuid, String orderDesc)
+    //@RequestMapping(value = "/orderapproved/{uuid}")
+
+    public Payment createPayment(double orderAmount, String orderUuid, String orderDesc)
             throws PayPalRESTException {
 
-        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("<CLIENT_ID>", "<CLIENT_SECRET>");
+        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AQEs6xCpYIYfdgMPalU6ZNbA217WAYUzmDygj7ZmglidF_AdTvMh8XD1x-wA", "EHcxsBCpFcOo0M7ioPhsIn25CN3aNCm0Mz6496w-LDGQzRjGKmMEphXKRwa6");
         String accessToken = tokenCredential.getAccessToken();
 
         Payment payment = new Payment();
@@ -53,8 +64,8 @@ public class PayPalController {
             amount.setDetails(amountDetails);
 
             RedirectUrls redirectUrls = new RedirectUrls();
-            redirectUrls.setCancelUrl("http://apbboard.com/rest/cancel/"+orderUuid);
-            redirectUrls.setReturnUrl("http://apbboard.com/post.html/orderapproved/"+orderUuid);
+            redirectUrls.setCancelUrl("http://apbboard.com/rest/paypal/cancel/"+orderUuid);
+            redirectUrls.setReturnUrl("http://apbboard.com/post.html/paypal/orderapproved/"+orderUuid);
 
             Transaction transaction = new Transaction();
             transaction.setAmount(amount);
@@ -70,7 +81,7 @@ public class PayPalController {
             payment.setRedirectUrls(redirectUrls);
             payment.setTransactions(transactions);
 
-        APIContext apiContext = new APIContext(accessToken, orderUuid);
+        APIContext apiContext = new APIContext(accessToken, UUID.randomUUID().toString());
         return payment.create(apiContext);
     }
 

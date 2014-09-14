@@ -59,5 +59,6 @@
 
     <context:component-scan base-package="com.xit.apbboard.controller"/>
     <context:component-scan base-package="com.xit.apbboard.dao"/>
+    <context:component-scan base-package="com.xit.apbboard.exceptions" />
     <mvc:annotation-driven/>
 </beans>
