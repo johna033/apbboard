@@ -30,4 +30,10 @@ public class RestGlobalExceptionHandler {
     public BaseResponse handlePriceItemError(){
         return new BaseResponse("Incorrect number of symbols / price combination!");
     }
+
+    @ExceptionHandler(InvalidPaymentRequestException.class)
+    @ResponseBody
+    public BaseResponse handlePaymentRequestError(){
+        return new BaseResponse("Incorrect post form!");
+    }
 }

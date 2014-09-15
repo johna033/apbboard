@@ -28,5 +28,6 @@ public class AdminPanelController {
 
     /*todo review, posted, send reward methods, save method*/
 
+    //@RequestMapping(value = "/sendreward")
 
 }

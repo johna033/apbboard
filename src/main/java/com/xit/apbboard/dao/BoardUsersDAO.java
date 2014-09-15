@@ -38,4 +38,10 @@ public class BoardUsersDAO {
                " inner join bulletins on bulletins.uuid = boardusers.uuid " +
                " inner join prices on boardusers.priceItem = prices.priceid", new HashMap<String, Object>(), new AdminUserMapper());
     }
+
+    public String getEmail(String uuid){
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("uuid", uuid);
+        return namedParameterJdbcTemplate.queryForObject("select email from boardusers where uuid = :uuid",params, String.class);
+    }
 }

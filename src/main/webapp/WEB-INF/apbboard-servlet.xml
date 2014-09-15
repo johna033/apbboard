@@ -78,10 +78,10 @@
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <!-- SMTP settings -->
-        <property name="host" value="localhost" />
+        <property name="host" value="mail.apbboard.com" />
         <property name="port" value="25" />
-        <property name="username" value="USER_NAME" />
-        <property name="password" value="PASSWORD" />
+        <property name="username" value="noreply" />
+        <property name="password" value="q902243362004" />
 
         <property name="javaMailProperties">
             <!-- additional properties specific to JavaMail -->
@@ -96,5 +96,6 @@
     <context:component-scan base-package="com.xit.apbboard.controller"/>
     <context:component-scan base-package="com.xit.apbboard.dao"/>
     <context:component-scan base-package="com.xit.apbboard.exceptions" />
+    <context:component-scan base-package="com.xit.apbboard.services" />
     <mvc:annotation-driven/>
 </beans>

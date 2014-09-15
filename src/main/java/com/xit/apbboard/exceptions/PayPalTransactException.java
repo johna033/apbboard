@@ -10,7 +10,7 @@ package com.xit.apbboard.exceptions;
 public class PayPalTransactException extends RuntimeException {
 
     public PayPalTransactException(Exception e){
-        System.out.println(e.getMessage());
+        System.out.println(e.getCause());
         e.printStackTrace();
     }
 }
