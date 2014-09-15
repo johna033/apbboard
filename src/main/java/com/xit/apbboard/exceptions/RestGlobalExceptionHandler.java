@@ -16,6 +16,18 @@ public class RestGlobalExceptionHandler {
     @ExceptionHandler(PayPalTransactException.class)
     @ResponseBody
     public BaseResponse handlePayPalRESTError(){
-        return new BaseResponse("Paypal internal error");
+        return new BaseResponse("PayPal internal error");
+    }
+
+    @ExceptionHandler(PagingBoundsException.class)
+    @ResponseBody
+    public BaseResponse handlePagingError(){
+        return new BaseResponse("Incorrect paging parameters!");
+    }
+
+    @ExceptionHandler(PriceItemNotFoundException.class)
+    @ResponseBody
+    public BaseResponse handlePriceItemError(){
+        return new BaseResponse("Incorrect number of symbols / price combination!");
     }
 }

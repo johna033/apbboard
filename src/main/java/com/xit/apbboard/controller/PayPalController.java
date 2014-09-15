@@ -7,23 +7,26 @@ import com.paypal.api.payments.*;
 import com.paypal.core.rest.APIContext;
 import com.paypal.core.rest.OAuthTokenCredential;
 import com.paypal.core.rest.PayPalRESTException;
+import com.sun.deploy.association.utility.AppConstants;
 import com.xit.apbboard.controller.dto.BaseResponse;
+import com.xit.apbboard.controller.dto.PaymentApprovalLink;
 import com.xit.apbboard.controller.dto.PaymentRequest;
 import com.xit.apbboard.dao.BoardUsersDAO;
 import com.xit.apbboard.dao.BulletinsDAO;
 import com.xit.apbboard.dao.PricesDAO;
 import com.xit.apbboard.exceptions.PayPalTransactException;
+import com.xit.apbboard.exceptions.PriceItemNotFoundException;
 import com.xit.apbboard.model.BoardUser;
 import com.xit.apbboard.model.Bulletin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -48,9 +51,13 @@ public class PayPalController {
     public BulletinsDAO bulletinsDAO;
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public BaseResponse payWithPayPal(@RequestBody PaymentRequest pr, HttpServletResponse httpResponse) {
+    public PaymentApprovalLink payWithPayPal(@RequestBody PaymentRequest pr, HttpServletResponse httpResponse) {
         int priceItemId = pricesDAO.getPriceItemId(pr.numberOfSymbols, pr.payment);
-        //todo check for no null
+
+        if (priceItemId == 0) {
+            throw new PriceItemNotFoundException();
+        }
+
         String newBulletinId = UUID.randomUUID().toString();
 
         BoardUser boardUser = new BoardUser();
@@ -58,30 +65,45 @@ public class PayPalController {
         boardUser.priceItem = priceItemId;
         boardUser.uuid = newBulletinId;
         boardUser.time = System.currentTimeMillis();
-        boardUsersDAO.add(boardUser);
 
         Bulletin bulletin = new Bulletin();
         bulletin.bulletidText = pr.text;
         bulletin.bulletinTitle = pr.title;
         bulletin.uuid = newBulletinId;
-        bulletinsDAO.add(bulletin);
 
-        /*try{
-            createPayment(26.75, "uuid", "desc");
-        }catch(PayPalRESTException e){
-            throw new PayPalTransactException(e);
-        }*/
+        bulletinsDAO.add(bulletin, boardUser);
         try {
-            httpResponse.sendRedirect("/index.html");
+            Payment payment = createPayment(pr.payment, newBulletinId, "APBBoard: " + pr.numberOfSymbols + " symbols for " + pr.payment + "$");
+            return new PaymentApprovalLink(getApprovalURL(payment));
+        } catch (PayPalRESTException e) {
+            throw new PayPalTransactException(e);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        return new PaymentApprovalLink("");
+    }
+
+    @RequestMapping(value = "/cancel/{uuid}")
+    public BaseResponse orderCanceled(@PathVariable("uuid") String uuid) {
+        bulletinsDAO.deleteFromBulletinsAndUsers(uuid);
+        return new BaseResponse("Order canceled");
+    }
+
+    @RequestMapping(value = "/execute/{uuid}")
+    public BaseResponse orderApproved(@PathVariable("uuid") String uuid, HttpServletRequest request) {
+
+        String payerId = request.getParameter("PayerID");
+        try {
+            handleExecutePayment(uuid, payerId);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new BaseResponse("No error");
+        return new BaseResponse("Your order has been successfully processed!");
     }
 
-    //@RequestMapping(value = "/orderapproved/{uuid}")
-
-    public Payment createPayment(double orderAmount, String orderUuid, String orderDesc)
+    private Payment createPayment(double orderAmount, String orderUuid, String orderDesc)
             throws PayPalRESTException {
 
         OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AQEs6xCpYIYfdgMPalU6ZNbA217WAYUzmDygj7ZmglidF_AdTvMh8XD1x-wA", "EHcxsBCpFcOo0M7ioPhsIn25CN3aNCm0Mz6496w-LDGQzRjGKmMEphXKRwa6");
@@ -101,7 +123,7 @@ public class PayPalController {
 
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setCancelUrl("http://apbboard.com/rest/paypal/cancel/" + orderUuid);
-        redirectUrls.setReturnUrl("http://apbboard.com/post.html/paypal/orderapproved/" + orderUuid);
+        redirectUrls.setReturnUrl("http://apbboard.com/rest/paypal/execute/" + orderUuid);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
@@ -119,6 +141,40 @@ public class PayPalController {
 
         APIContext apiContext = new APIContext(accessToken, UUID.randomUUID().toString());
         return payment.create(apiContext);
+    }
+
+    private void handleExecutePayment(String orderId, String payerId) throws IOException {
+
+        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AQEs6xCpYIYfdgMPalU6ZNbA217WAYUzmDygj7ZmglidF_AdTvMh8XD1x-wA", "EHcxsBCpFcOo0M7ioPhsIn25CN3aNCm0Mz6496w-LDGQzRjGKmMEphXKRwa6");
+
+        // Construct a payment for complete payment execution
+        Payment payment = new Payment();
+        payment.setId(orderId);
+        PaymentExecution paymentExecute = new PaymentExecution();
+        paymentExecute.setPayerId(payerId);
+        try {
+
+            // set access token
+            String accessToken = tokenCredential.getAccessToken();
+            String requestId = UUID.randomUUID().toString();
+            APIContext apiContext = new APIContext(accessToken, requestId);
+            payment.execute(apiContext, paymentExecute);
+        } catch (PayPalRESTException pex) {
+        }
+    }
+
+    private String getApprovalURL(Payment payment)
+            throws UnsupportedEncodingException {
+        String redirectUrl = null;
+        List<Link> links = payment.getLinks();
+        for (Link l : links) {
+            if (l.getRel().equalsIgnoreCase("approval_url")) {
+                redirectUrl = URLDecoder
+                        .decode(l.getHref(), "UTF-8");
+                break;
+            }
+        }
+        return redirectUrl;
     }
 
 }

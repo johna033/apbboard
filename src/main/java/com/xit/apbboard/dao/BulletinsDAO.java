@@ -2,10 +2,12 @@ package com.xit.apbboard.dao;
 
 import com.xit.apbboard.controller.dto.BulletinResponse;
 import com.xit.apbboard.dao.mappers.BulletinResponseMapper;
+import com.xit.apbboard.model.BoardUser;
 import com.xit.apbboard.model.Bulletin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,5 +41,25 @@ public class BulletinsDAO {
 
     public int countBulletins(){
         return namedParameterJdbcTemplate.queryForObject("select count(*) from bulletins where reviewed=true", new HashMap<String, Object>(), Integer.class);
+    }
+
+    @Transactional
+    public void add(Bulletin bulletin, BoardUser boardUser){
+        add(bulletin);
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("email", boardUser.email);
+        params.put("uuid", boardUser.uuid);
+        params.put("time", boardUser.time);
+        params.put("priceItem", boardUser.priceItem);
+        namedParameterJdbcTemplate.update("insert into boardusers (email, uuid, rewardSent, creationTime, priceItem) values (:email, :uuid, false, :time, :priceItem)",params);
+    }
+
+    @Transactional
+    public void deleteFromBulletinsAndUsers(String uuid){
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("uuid", uuid);
+        namedParameterJdbcTemplate.update("delete from boardusers where uuid = :uuid", params);
+        namedParameterJdbcTemplate.update("delete from bulletins where uuid = :uuid", params);
     }
 }

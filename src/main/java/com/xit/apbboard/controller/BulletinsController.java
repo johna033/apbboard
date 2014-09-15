@@ -3,6 +3,7 @@ package com.xit.apbboard.controller;
 import com.xit.apbboard.controller.dto.BulletinListPageResponse;
 import com.xit.apbboard.dao.BulletinsDAO;
 import com.xit.apbboard.dao.PricesDAO;
+import com.xit.apbboard.exceptions.PagingBoundsException;
 import com.xit.apbboard.model.Price;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,6 +47,14 @@ public class BulletinsController {
     @RequestMapping(value="/bulletins/{offset}/{size}", method = RequestMethod.GET)
     public BulletinListPageResponse getFirstPage(@PathVariable("offset") int offset,
                                                  @PathVariable("size") int size){
+        validatePagingParams(size, offset,bulletinsDAO.countBulletins());
         return new BulletinListPageResponse(bulletinsDAO.getPartialList(offset, size), BULLETINS_PER_PAGE, bulletinsDAO.countBulletins(), offset, size);
     }
+
+    private void validatePagingParams(int size, int offset, int bulletinsCount){
+            if(size > bulletinsCount || offset > bulletinsCount){
+                throw new PagingBoundsException();
+            }
+    }
+
 }
