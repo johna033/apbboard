@@ -38,7 +38,9 @@ public class BoardUsersDAO {
        return namedParameterJdbcTemplate.query("select userId, boardusers.uuid, email, creationTime, rewardSent, bulletinText, bulletinTitle," +
                "paid, posted, priceInRUR from boardusers" +
                " inner join bulletins on bulletins.uuid = boardusers.uuid " +
-               " inner join prices on boardusers.priceItem = prices.priceid", new HashMap<String, Object>(), new AdminUserMapper());
+               " inner join prices on boardusers.priceItem = prices.priceid" +
+               " order by creationTime desc",
+               new HashMap<String, Object>(), new AdminUserMapper());
     }
 
     public String getEmail(String uuid){

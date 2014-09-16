@@ -70,6 +70,12 @@
           <artifactId>rest-api-sdk</artifactId>
           <version>0.5.2</version>
       </dependency>
+      <dependency>
+          <groupId>javax</groupId>
+          <artifactId>javaee-api</artifactId>
+          <version>7.0</version>
+      </dependency>
+
   </dependencies>
   <build>
     <finalName>apbboard</finalName>

@@ -56,11 +56,11 @@
 
     <security:http entry-point-ref="restAuthenticationEntryPoint">
         <security:form-login authentication-failure-handler-ref="restAuthenticationFailureHandler" authentication-success-handler-ref="restAuthenticationSuccessHandler"/>
-        <security:logout logout-success-url="/admin.html/clients" />
+        <security:logout logout-success-url="/admin.html" />
         <security:session-management>
             <security:concurrency-control
                     max-sessions="1"
-                    expired-url="/session/expired" />
+                    expired-url="/admin.html" />
         </security:session-management>
         <security:intercept-url pattern="/rest/admin/**" access="ROLE_ADMIN" />
     </security:http>
@@ -80,7 +80,7 @@
         <!-- SMTP settings -->
         <property name="host" value="mail.apbboard.com" />
         <property name="port" value="25" />
-        <property name="username" value="noreply" />
+        <property name="username" value="noreply@apbboard.com" />
         <property name="password" value="q902243362004" />
 
         <property name="javaMailProperties">

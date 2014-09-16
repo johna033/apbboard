@@ -5,7 +5,7 @@
 
 app.controller('bulletinListCtrl', function ($scope, $http) {
     $scope.maxSize = 5;
-    $scope.bulletins = [];
+    //$scope.bulletins = [];
     $http.get('/rest/bulletins').success(function(data){
         $scope.bulletins = data.listResponse;
 
