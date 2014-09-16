@@ -1,0 +1,99 @@
+<div class="row">
+    <div class="col-xs-12 col-xs-push-3">
+        <a href="/index.html"><img src="img/apbb.png"/></a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-xs-push-1">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label for="email" class="col-sm-2 control-label">Contact email:</label>
+
+                <div class="col-sm-7">
+                    <input type="email" class="form-control" id="email"
+                           placeholder="email@domain.smth" ng-model="email">
+                </div>
+                <div class="col-sm-3" ng-show="isValidLogin">
+                    <i class="glyphicon glyphicon-ok-sign" style="color: #00CC00; font-size:16pt;" rel="tooltip"
+                       title="Login valid"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-push-2">
+                    <select ng-model="plan" id="Number of symbols" class="form-control"
+                            ng-options="obj.stringOffer for obj in priceList track by obj.priceId"
+                            ng-change="selectedNewPlan()">
+                        <option value="">Select advertisement plan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" ng-show="hasReward">
+                <div class="col-sm-7 col-sm-push-2">
+                    <strong>Reward {{plan.priceInRUR}} rur iTunes gift card </strong>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="title" class="col-sm-2 control-label">Bulletin title:</label>
+
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" id="title"
+                           placeholder="Title" ng-model="title" ng-disabled="!planChosen"
+                           ng-change="validateTitle()">
+                </div>
+                <div class="col-sm-3" ng-show="correctTitle">
+                    <i class="glyphicon glyphicon-ok-sign" style="color: #00CC00; font-size:16pt;" rel="tooltip"
+                       title="Title valid"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-push-2">
+                    <h4 class="list-group-item-heading">
+                        {{title}}
+                    </h4>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-push-2">
+                    <textarea class="form-control" id="text"
+                              placeholder="Bulletin text" ng-model="text"
+                              style="height: 250px;" ng-disabled="!planChosen"
+                              ng-change="lengthControl()"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-push-2">
+                    <p style="color: {{tooLongText ? '#ac2925' : '#00cc00'}}" ng-show="showSymbolCount">
+                        symbols remaining: {{symbolsRemaining}}
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-push-2">
+                    <accordion>
+                        <accordion-group is-open="status.open">
+                            <accordion-heading ng-click="paymentExpanded()">
+                                <div>
+                                    Payment method<i class="pull-right glyphicon"
+                                                     ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                                </div>
+                            </accordion-heading>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <button class="btn btn-warning" ng-disabled="!planChosen" ng-click="postBulletin()">
+                                        Pay with PayPal
+                                    </button>
+                                </div>
+                                <div class="col-sm-7"></div>
+                                <div class="col-sm-3"><strong style="font-size: 12pt;" style="vertical-align: middle;">Total:
+                                    {{price}}$</strong>
+                                </div>
+                            </div>
+                        </accordion-group>
+                    </accordion>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

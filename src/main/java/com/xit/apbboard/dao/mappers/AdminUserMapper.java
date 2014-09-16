@@ -18,12 +18,13 @@ public class AdminUserMapper implements RowMapper<AdminUsersResponse> {
     @Override
     public AdminUsersResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
         AdminUsersResponse adminUsersResponse = new AdminUsersResponse();
-        adminUsersResponse.email = rs.getString("email");
         adminUsersResponse.userId = rs.getInt("userId");
+        adminUsersResponse.email = rs.getString("email");
+        adminUsersResponse.uuid = rs.getString("uuid");
         adminUsersResponse.time = rs.getLong("creationTime");
         adminUsersResponse.title = rs.getString("bulletinTitle");
         adminUsersResponse.text = rs.getString("bulletinText");
-        adminUsersResponse.reviewed = rs.getBoolean("reviewed");
+        adminUsersResponse.paid = rs.getBoolean("paid");
         adminUsersResponse.posted = rs.getBoolean("posted");
         adminUsersResponse.reward = rs.getDouble("priceInRUR");
         adminUsersResponse.rewardSent = rs.getBoolean("rewardSent");

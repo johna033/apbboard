@@ -1,4 +1,4 @@
-package com.xit.apbboard.model;
+package com.xit.apbboard.model.db;
 
 import java.io.Serializable;
 

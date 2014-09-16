@@ -12,6 +12,7 @@ app.controller('bulletinListCtrl', function ($scope, $http) {
         $scope.currentPage = getPageNumber(data.size, data.offset);
         $scope.itemsPerPage = data.itemsPerPage;
         $scope.totalItems = data.itemsCount;
+        console.log(data);
 
     });
     console.log($scope.bulletins);

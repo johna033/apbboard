@@ -38,7 +38,7 @@ public class MailNotificationService {
         ((JavaMailSenderImpl)mailSender).send(mimeMessagePreparator);
     }
 
-    public void sendReward(String email, String reward){
+    public void sendReward(String email, String reward, double amount){
 
         MimeMessagePreparator mimeMessagePreparator = new MimeMessagePreparator() {
             @Override
@@ -47,7 +47,7 @@ public class MailNotificationService {
                 message.setFrom("noreply@apbboard.com");
                 message.setTo(email);
                 message.setSubject("Reward from APBBoard.com");
-                message.setText("<b>Dear client,</b><br/>Here is your iTunes gift card redemption code:"+reward+" <br/> Best regards, APBBOARD.COM Support Team.", true);
+                message.setText("<b>Dear client,</b><br/>Here is your iTunes "+amount+" RUR gift card redemption code:"+reward+" <br/> Best regards, APBBOARD.COM Support Team.", true);
             }
         };
         ((JavaMailSenderImpl)mailSender).send(mimeMessagePreparator);

@@ -1,6 +1,6 @@
 package com.xit.apbboard.dao.mappers;
 
-import com.xit.apbboard.model.Price;
+import com.xit.apbboard.model.db.Price;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

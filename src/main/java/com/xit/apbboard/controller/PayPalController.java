@@ -14,8 +14,8 @@ import com.xit.apbboard.dao.PricesDAO;
 import com.xit.apbboard.exceptions.InvalidPaymentRequestException;
 import com.xit.apbboard.exceptions.PayPalTransactException;
 import com.xit.apbboard.exceptions.PriceItemNotFoundException;
-import com.xit.apbboard.model.BoardUser;
-import com.xit.apbboard.model.Bulletin;
+import com.xit.apbboard.model.db.BoardUser;
+import com.xit.apbboard.model.db.Bulletin;
 import com.xit.apbboard.services.MailNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -103,16 +103,17 @@ public class PayPalController {
         return new BaseResponse("Order canceled");
     }
 
-    @RequestMapping(value = "/execute/{uuid}")
-    public BaseResponse orderApproved(@PathVariable("uuid") String uuid, HttpServletRequest request) {
-
-        String payerId = request.getParameter("PayerID");
+    @RequestMapping(value = "/execute/{uuid}/{payerId}")
+    public BaseResponse orderApproved(@PathVariable("uuid") String uuid,
+                                      @PathVariable("payerId") String payerId,
+                                      HttpServletRequest request) {
         try {
             handleExecutePayment(uuid, payerId);
         } catch (IOException e) {
             e.printStackTrace();
         }
         mns.sendPurchaseNotification(boardUsersDAO.getEmail(uuid));
+        boardUsersDAO.updatePaid(uuid);
         return new BaseResponse("Your order has been successfully processed!");
     }
 
@@ -140,8 +141,8 @@ public class PayPalController {
         amount.setDetails(amountDetails);
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("http://apbboard.com/rest/paypal/cancel/" + orderUuid);
-        redirectUrls.setReturnUrl("http://apbboard.com/rest/paypal/execute/" + orderUuid);
+        redirectUrls.setCancelUrl("http://apbboard.com/post.html/cancel/?uuid=" + orderUuid);
+        redirectUrls.setReturnUrl("http://apbboard.com/post.html/execute/?uuid=" + orderUuid);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);

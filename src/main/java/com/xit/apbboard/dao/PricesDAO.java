@@ -1,6 +1,6 @@
 package com.xit.apbboard.dao;
 
-import com.xit.apbboard.model.Price;
+import com.xit.apbboard.model.db.Price;
 import com.xit.apbboard.dao.mappers.PriceRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
