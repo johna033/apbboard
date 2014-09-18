@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <h3 class="modal-title">Send gift card code for {{client.reward}} RUR</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        <div class="form-group">
+                <div class="col-sm-1">
+                    Code:
+               </div>
+                <div class="col-sm-3">
+                    <input type="text" ng-model="rewardCode" placeholder="CCCCCCC"/>
+                </div>
+            </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="send(rewardCode)">Send</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

@@ -14,4 +14,5 @@ public class BaseResponse implements Serializable {
     public BaseResponse(String errorDesc){
         this.errorDesc = errorDesc;
     }
+
 }

@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+    <div class="panel-heading">Recent clients view</div>
+    <div class="panel-body">
+        <div style="height: 200px; vertical-align: baseline; text-align: center;" ng-show="clients.length == 0">
+        <p style="font-size: 20pt; color: #CCCCCC;">No recent clients!<br/>Business is running slow!</p>
+        </div>
+        <table class="table table-bordered" ng-show="clients.length > 0">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Time</th>
+                <th>Email</th>
+                <th>Bulletin</th>
+                <th>Reward (RUR)</th>
+                <th>Send reward</th>
+                <th>Paid</th>
+                <th>Post</th>
+            </tr>
+            </thead>
+            <tbody ng-repeat="client in clients">
+            <tr>
+                <td>{{client.userId}}</td>
+                <td>{{client.time | date:'MM/dd/yyyy @ h:mma'}}</td>
+                <td>{{client.email}}</td>
+                <td><strong>{{client.title}}</strong>
+
+                    <p>{{client.text}}</p></td>
+                <td>
+                    {{client.reward}}
+                </td>
+                <td><a class="btn btn-primary btn-xs" ng-click="sendReward(client)" ng-disabled="client.rewardSent || client.reward == 0 || !client.paid">Send
+                    reward</a></td>
+                <td>{{client.paid}}</td>
+                <td><a class="btn btn-primary btn-xs" ng-click="postBulletin(client)" ng-disabled="!client.paid || client.posted">Post</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

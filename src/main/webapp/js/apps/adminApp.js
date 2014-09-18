@@ -11,6 +11,10 @@ app.config(['$routeProvider',
                 templateUrl: './templates/adminSignInView.html',
                 controller: 'loginCtrl'
             }).
+            when('/clients', {
+                templateUrl:'./templates/adminInterface.html',
+                controller: 'clientsCtrl'
+            }).
             otherwise({
                 redirectTo: '/'
             });
