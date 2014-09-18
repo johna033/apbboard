@@ -122,7 +122,7 @@ public class PayPalController {
             throw new InvalidPaymentRequestException();
         }
     }
-
+    //todo check if paypal works
     private Payment createPayment(double orderAmount, String orderUuid, String orderDesc)
             throws PayPalRESTException {
 
