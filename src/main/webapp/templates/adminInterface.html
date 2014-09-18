@@ -28,10 +28,10 @@
                 <td>
                     {{client.reward}}
                 </td>
-                <td><a class="btn btn-primary btn-xs" ng-click="sendReward(client)" ng-disabled="client.rewardSent || !client.paid || client.reward == 0">Send
+                <td><a class="btn btn-primary btn-xs" ng-click="sendReward(client)" ng-disabled="client.rewardSent || client.reward == 0 || !client.paid">Send
                     reward</a></td>
                 <td>{{client.paid}}</td>
-                <td><a class="btn btn-primary btn-xs" ng-click="postBulletin(client)" ng-disabled="!client.paid">Post</a></td>
+                <td><a class="btn btn-primary btn-xs" ng-click="postBulletin(client)" ng-disabled="!client.paid || client.posted">Post</a></td>
             </tr>
             </tbody>
         </table>
