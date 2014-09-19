@@ -17,6 +17,7 @@ import com.xit.apbboard.exceptions.PriceItemNotFoundException;
 import com.xit.apbboard.model.db.BoardUser;
 import com.xit.apbboard.model.db.Bulletin;
 import com.xit.apbboard.services.MailNotificationService;
+import com.xit.apbboard.services.PayPalAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,18 +51,6 @@ public class PayPalController {
     @Autowired
     public MailNotificationService mns;
 
-    @PostConstruct
-    private void setUp() {
-        Properties prop = new Properties();
-        prop.put("service.EndPoint", "https://api.sandbox.paypal.com");
-        prop.put("http.ConnectionTimeOut", "5000");
-        prop.put("http.Retry", "1");
-        prop.put("http.ReadTimeOut", "30000");
-        prop.put("http.MaxConnection", "100");
-        prop.put("http.UseProxy", "false");
-        prop.put("http.GoogleAppEngine", "false");
-        PayPalResource.initConfig(prop);
-    }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
     public PaymentApprovalLink payWithPayPal(@RequestBody PaymentRequest pr, HttpServletResponse httpResponse) {
@@ -97,24 +86,19 @@ public class PayPalController {
         return new PaymentApprovalLink("http://localhost:8080/post.html");
     }
 
-    @RequestMapping(value = "/cancel/{uuid}")
-    public BaseResponse orderCanceled(@PathVariable("uuid") String uuid) {
+    @RequestMapping(value = "/final/cancel/{uuid}")
+    public void orderCanceled(@PathVariable("uuid") String uuid,
+                              HttpServletResponse response) throws IOException {
         bulletinsDAO.deleteFromBulletinsAndUsers(uuid);
-        return new BaseResponse("Order canceled");
+        response.sendRedirect("/index.html");
     }
 
-    @RequestMapping(value = "/execute/{uuid}/{payerId}")
-    public BaseResponse orderApproved(@PathVariable("uuid") String uuid,
-                                      @PathVariable("payerId") String payerId,
-                                      HttpServletRequest request) {
-        try {
-            handleExecutePayment(uuid, payerId);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @RequestMapping(value = "/final/execute/{uuid}")
+    public void orderApproved(@PathVariable("uuid") String uuid,
+                                      HttpServletResponse response) throws IOException {
         mns.sendPurchaseNotification(boardUsersDAO.getEmail(uuid));
         boardUsersDAO.updatePaid(uuid);
-        return new BaseResponse("Your order has been successfully processed!");
+        response.sendRedirect("/index.html");
     }
 
     private void validatePaymentRequest(PaymentRequest paymentRequest){
@@ -126,8 +110,6 @@ public class PayPalController {
     private Payment createPayment(double orderAmount, String orderUuid, String orderDesc)
             throws PayPalRESTException {
 
-        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AQEs6xCpYIYfdgMPalU6ZNbA217WAYUzmDygj7ZmglidF_AdTvMh8XD1x-wA", "EHcxsBCpFcOo0M7ioPhsIn25CN3aNCm0Mz6496w-LDGQzRjGKmMEphXKRwa6");
-        String accessToken = tokenCredential.getAccessToken();
         Payment payment = new Payment();
 
         AmountDetails amountDetails = new AmountDetails();
@@ -141,8 +123,8 @@ public class PayPalController {
         amount.setDetails(amountDetails);
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setCancelUrl("http://apbboard.com/post.html/cancel/?uuid=" + orderUuid);
-        redirectUrls.setReturnUrl("http://apbboard.com/post.html/execute/?uuid=" + orderUuid);
+        redirectUrls.setCancelUrl("http://apbboard.com/paypal/cancel/?uuid=" + orderUuid);
+        redirectUrls.setReturnUrl("http://apbboard.com/paypal/execute/?uuid=" + orderUuid);
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
@@ -158,28 +140,8 @@ public class PayPalController {
         payment.setRedirectUrls(redirectUrls);
         payment.setTransactions(transactions);
 
-        APIContext apiContext = new APIContext(accessToken, UUID.randomUUID().toString());
+        APIContext apiContext = new APIContext(PayPalAccessToken.tokenGenerator.generateToken(), UUID.randomUUID().toString());
         return payment.create(apiContext);
-    }
-
-    private void handleExecutePayment(String orderId, String payerId) throws IOException {
-
-        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AQEs6xCpYIYfdgMPalU6ZNbA217WAYUzmDygj7ZmglidF_AdTvMh8XD1x-wA", "EHcxsBCpFcOo0M7ioPhsIn25CN3aNCm0Mz6496w-LDGQzRjGKmMEphXKRwa6");
-
-        // Construct a payment for complete payment execution
-        Payment payment = new Payment();
-        payment.setId(orderId);
-        PaymentExecution paymentExecute = new PaymentExecution();
-        paymentExecute.setPayerId(payerId);
-        try {
-
-            // set access token
-            String accessToken = tokenCredential.getAccessToken();
-            String requestId = UUID.randomUUID().toString();
-            APIContext apiContext = new APIContext(accessToken, requestId);
-            payment.execute(apiContext, paymentExecute);
-        } catch (PayPalRESTException pex) {
-        }
     }
 
     private String getApprovalURL(Payment payment)

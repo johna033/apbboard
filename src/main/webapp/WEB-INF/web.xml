@@ -21,6 +21,16 @@
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>payment</servlet-name>
+        <servlet-class>com.xit.apbboard.servlets.PayPalPostProcessingServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>payment</servlet-name>
+        <url-pattern>/paypal/*</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

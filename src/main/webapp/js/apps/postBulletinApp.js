@@ -11,14 +11,6 @@ app.config(['$routeProvider',
                 templateUrl: './templates/postForm.html',
                 controller: 'postFormCtrl'
             }).
-            when('/execute', {
-                templateUrl:'./templates/executePayment.html',
-                controller: 'executePaymentCtrl'
-            }).
-            when('/cancel', {
-                templateUrl:'./templates/cancelPayment.html',
-                controller: 'cancelPaymentCtrl'
-            }).
             otherwise({
                 redirectTo: '/'
             });
