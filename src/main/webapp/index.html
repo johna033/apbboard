@@ -4,6 +4,7 @@
     <title>All Points Bulletin Board</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
     <meta name="keywords" content="advertising, gifts, itunes, savings, bulletin, board">
     <script src="js/vendor/jquery/jquery-1.11.1.min.js"></script>
     <script src="js/vendor/angular/angular.min.js"></script>
@@ -15,34 +16,44 @@
 <body>
 <div class="container" ng-app="apbboardApp">
     <div class="row">
-        <div class="col-xs-12 col-xs-push-3">
-        <a href="/index.html"><img src="img/apbb.png" /></a>
+        <div class="alert alert-info" role="alert">This is a test version, some functionality may not be fully
+            enabled!
         </div>
     </div>
+    <div class="row" style=" border:  1px solid black;">
+        <div style="width: 768px; margin-left: auto; margin-right: auto; text-align: center;">
+            <p style="font-size:48pt; font-family: 'Trajan Pro'">All Points Bulletin <br/> Board</p>
+        </div>
+    </div>
+    <div class="row" style="height: 20px;"></div>
     <div class="row">
-        <a class="btn btn-block btn-warning" href="post.html"><i class="glyphicon glyphicon-plus-sign" style="font-size: 12pt;"></i><strong style="font-size: 14pt;">
+        <a class="btn btn-block btn-warning" href="post.html"><i class="glyphicon glyphicon-plus-sign"
+                                                                 style="font-size: 12pt;"></i><strong
+                style="font-size: 14pt;">
             &nbsp;Post a bulletin</strong></a>
     </div>
     <div class="row" style="height: 15px;"></div>
     <div class="row" ng-controller="bulletinListCtrl">
-        <div class="list-group-item" style="height: 200px; vertical-align: baseline; text-align: center;" ng-show="{{bulletins.length==0}}">
+        <div class="list-group-item" style="height: 200px; vertical-align: baseline; text-align: center;"
+             ng-show="{{bulletins.length==0}}">
             <p style="font-size: 20pt; color: #CCCCCC;">No bulletins posted yet!<br/>Be the first!</p>
         </div>
-        <div  ng-show = "{{bulletins.length!=0}}" >
-        <div class="list-group" ng-repeat="bulletin in bulletins">
-            <div class="list-group-item">
-                <h4 class="list-group-item-heading">{{bulletin.title}}</h4>
-                <p class="list-group-item-text">{{bulletin.text}}</p>
+        <div ng-show="{{bulletins.length!=0}}">
+            <div class="list-group" ng-repeat="bulletin in bulletins">
+                <div class="list-group-item">
+                    <h4 class="list-group-item-heading">{{bulletin.title}}</h4>
+
+                    <p class="list-group-item-text">{{bulletin.text}}</p>
+                </div>
             </div>
-        </div>
             <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage"
                         ng-change="pageChanged()"
                         class="pagination-sm"
                         previous-text="&lsaquo;" next-text="&rsaquo;"
                         first-text="&laquo;" last-text="&raquo;"
-                        max-size = "maxSize"
+                        max-size="maxSize"
                         items-per-page="itemsPerPage"
-                        rotate = "false">
+                        rotate="false">
             </pagination>
         </div>
     </div>

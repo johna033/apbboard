@@ -36,9 +36,9 @@
     <bean id="dataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/apbboard"/>
-        <property name="username" value="root"/>
-        <property name="password" value="1234"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/apbboar_apbboard"/>
+        <property name="username" value="apbboar_apbboar"/>
+        <property name="password" value="q902243362004"/>
     </bean>
 
     <bean id="transactionManager"
@@ -64,10 +64,7 @@
         </security:session-management>
         <security:intercept-url pattern="/rest/admin/**" access="ROLE_ADMIN" />
     </security:http>
-    <!-- <security:http pattern="/rest/oauth">
 
-     </security:http>
- -->
     <security:authentication-manager>
         <security:authentication-provider>
             <security:password-encoder ref="bcryptEncoder"/>
