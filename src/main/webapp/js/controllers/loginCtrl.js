@@ -8,6 +8,8 @@ app.controller('loginCtrl', function ($scope, $http, $location) {
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).success(function () {
                 $location.path('/clients');
+            }).error(function(data){
+                alert(data.errorDesc);
             });
     };
 });

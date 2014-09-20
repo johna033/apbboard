@@ -7,7 +7,9 @@ app.controller('clientsCtrl', function ($scope, $http, $modal) {
 
     $http.post('/rest/admin/clients').success(function (data) {
         $scope.clients = data;
-    });
+    }).error(function(data){
+            alert(data.errorDesc);
+        });
 
     $scope.sendReward = function (client) {
        var modalInstance = $modal.open({
@@ -28,8 +30,8 @@ app.controller('clientsCtrl', function ($scope, $http, $modal) {
         $http.post('/rest/admin/post', {uuid: client.uuid}).success(function () {
             alert("Posted successfully");
             client.posted = true;
-        }).error(function (status, statusText) {
-                alert(status + " " + statusText);
+        }).error(function(data){
+                alert(data.errorDesc);
             });
     };
 
@@ -43,8 +45,8 @@ var ModalInstanceCtrl = function ($scope, $http, $modalInstance, client) {
         $http.post('/rest/admin/sendreward', {uuid: client.uuid, giftCode:rewardCode}).success(function () {
             alert("Reward sent sucessfully");
             $modalInstance.close(client);
-        }).error(function (status, statusText) {
-                alert(status + " " + statusText);
+        }).error(function(data){
+                alert(data.errorDesc);
             });
     };
 

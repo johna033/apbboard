@@ -76,6 +76,7 @@ public class PayPalController {
         bulletinsDAO.add(bulletin, boardUser);
         try {
             Payment payment = createPayment(pr.payment, newBulletinId, "APBBoard: " + pr.numberOfSymbols + " symbols for " + pr.payment + "$");
+            boardUsersDAO.setPaymentId(newBulletinId, payment.getId());
             return new PaymentApprovalLink(getApprovalURL(payment));
 
         } catch (PayPalRESTException e) {
@@ -90,7 +91,7 @@ public class PayPalController {
     public void orderCanceled(@PathVariable("uuid") String uuid,
                               HttpServletResponse response) throws IOException {
         bulletinsDAO.deleteFromBulletinsAndUsers(uuid);
-        response.sendRedirect("/index.html");
+        response.sendRedirect("/index.html/canceled");
     }
 
     @RequestMapping(value = "/final/execute/{uuid}")
@@ -98,7 +99,7 @@ public class PayPalController {
                                       HttpServletResponse response) throws IOException {
         mns.sendPurchaseNotification(boardUsersDAO.getEmail(uuid));
         boardUsersDAO.updatePaid(uuid);
-        response.sendRedirect("/index.html");
+        response.sendRedirect("/index.html/approved");
     }
 
     private void validatePaymentRequest(PaymentRequest paymentRequest){
