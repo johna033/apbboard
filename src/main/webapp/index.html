@@ -9,54 +9,15 @@
     <script src="js/vendor/jquery/jquery-1.11.1.min.js"></script>
     <script src="js/vendor/angular/angular.min.js"></script>
     <script src="js/vendor/bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
+    <script src="js/vendor/angular/angular-route.min.js"></script>
     <script src="js/scripts/utils.js"></script>
     <script src="js/apps/apbboardApp.js"></script>
     <script src="js/controllers/bulletinListCtrl.js"></script>
 </head>
 <body>
 <div class="container" ng-app="apbboardApp">
-    <div class="row">
-        <div class="alert alert-info" role="alert">This is a test version, some functionality may not be fully
-            enabled!
-        </div>
-    </div>
-    <div class="row" style=" border:  1px solid black;">
-        <div style="width: 768px; margin-left: auto; margin-right: auto; text-align: center;">
-            <p style="font-size:48pt; font-family: 'Trajan Pro'">All Points Bulletin <br/> Board</p>
-        </div>
-    </div>
-    <div class="row" style="height: 20px;"></div>
-    <div class="row">
-        <a class="btn btn-block btn-warning" href="post.html"><i class="glyphicon glyphicon-plus-sign"
-                                                                 style="font-size: 12pt;"></i><strong
-                style="font-size: 14pt;">
-            &nbsp;Post a bulletin</strong></a>
-    </div>
-    <div class="row" style="height: 15px;"></div>
-    <div class="row" ng-controller="bulletinListCtrl">
-        <div class="list-group-item" style="height: 200px; vertical-align: baseline; text-align: center;"
-             ng-show="{{bulletins.length==0}}">
-            <p style="font-size: 20pt; color: #CCCCCC;">No bulletins posted yet!<br/>Be the first!</p>
-        </div>
-        <div ng-show="{{bulletins.length!=0}}">
-            <div class="list-group" ng-repeat="bulletin in bulletins">
-                <div class="list-group-item">
-                    <h4 class="list-group-item-heading">{{bulletin.title}}</h4>
 
-                    <p class="list-group-item-text">{{bulletin.text}}</p>
-                </div>
-            </div>
-            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage"
-                        ng-change="pageChanged()"
-                        class="pagination-sm"
-                        previous-text="&lsaquo;" next-text="&rsaquo;"
-                        first-text="&laquo;" last-text="&raquo;"
-                        max-size="maxSize"
-                        items-per-page="itemsPerPage"
-                        rotate="false">
-            </pagination>
-        </div>
-    </div>
+   <div ng-view></div>
 </div>
 </body>
 </html>

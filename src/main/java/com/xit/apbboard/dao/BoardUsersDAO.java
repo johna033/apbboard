@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +55,17 @@ public class BoardUsersDAO {
         params.put("uuid", uuid);
         return namedParameterJdbcTemplate.query("select email, priceInRUR from boardusers " +
                 "join prices on boardusers.priceItem = prices.priceid and boardusers.uuid=:uuid", params, new RewardInfoMapper()).get(0);
+    }
+
+    public void setPaymentId(String uuid, String paymentID){
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("uuid", uuid);
+        params.put("paymentID", paymentID);
+        namedParameterJdbcTemplate.update("update boardusers set paymentID=:paymentID where uuid=:uuid", params);
+    }
+
+    public String getPaymentID(String uuid){
+        return namedParameterJdbcTemplate.queryForObject("select paymentID from boardusers where uuid=:uuid", Collections.singletonMap("uuid", uuid), String.class);
     }
 
     public void updatePaid(String uuid){

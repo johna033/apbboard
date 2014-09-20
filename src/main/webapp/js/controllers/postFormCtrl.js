@@ -26,8 +26,8 @@ app.controller('postFormCtrl', function ($scope, $http, $location) {
         }
         $http.post('/rest/paypal/pay', {email: $scope.email, payment: $scope.plan.price, numberOfSymbols: $scope.plan.amountOfSymbols, text: $scope.text, title: $scope.title}).success(function (data) {
            window.location.href = data.link;
-        }).error(function (statusText) {
-                alert(statusText);
+        }).error(function(data){
+                alert(data.errorDesc);
             });
     };
 
