@@ -91,7 +91,7 @@ public class PayPalController {
     public void orderCanceled(@PathVariable("uuid") String uuid,
                               HttpServletResponse response) throws IOException {
         bulletinsDAO.deleteFromBulletinsAndUsers(uuid);
-        response.sendRedirect("/index.html/canceled");
+        response.sendRedirect("/#/canceled");
     }
 
     @RequestMapping(value = "/final/execute/{uuid}")
@@ -99,7 +99,7 @@ public class PayPalController {
                                       HttpServletResponse response) throws IOException {
         mns.sendPurchaseNotification(boardUsersDAO.getEmail(uuid));
         boardUsersDAO.updatePaid(uuid);
-        response.sendRedirect("/index.html/approved");
+        response.sendRedirect("/#/approved");
     }
 
     private void validatePaymentRequest(PaymentRequest paymentRequest){

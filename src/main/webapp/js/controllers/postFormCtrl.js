@@ -16,15 +16,26 @@ app.controller('postFormCtrl', function ($scope, $http, $location) {
     $scope.priceList = [];
     $http.get('/rest/prices').success(function (data) {
         $scope.priceList = data;
-        console.log(data);
-    });
+    }).error(function(data){
+            alert(data.errorDesc);
+        });;
 
     $scope.postBulletin = function () {
         if($scope.email == null || $scope.email == ''){
             alert("Fill out email correctly please");
             return;
         }
+        if($scope.tooLongText){
+            alert("Your bulletin is too long!");
+            return;
+        }
+        if(!$scope.correctTitle){
+            alert("Your bulletin title is incorrect!");
+            return;
+        }
+
         $http.post('/rest/paypal/pay', {email: $scope.email, payment: $scope.plan.price, numberOfSymbols: $scope.plan.amountOfSymbols, text: $scope.text, title: $scope.title}).success(function (data) {
+            $scope.planChosen = false;
            window.location.href = data.link;
         }).error(function(data){
                 alert(data.errorDesc);

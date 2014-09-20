@@ -17,7 +17,7 @@ public class PayPalAccessToken {
 
     private PayPalAccessToken(){
         Properties prop = new Properties();
-        prop.put("service.EndPoint", "https://api.sandbox.paypal.com");
+        prop.put("service.EndPoint", "https://api.paypal.com");
         prop.put("http.ConnectionTimeOut", "5000");
         prop.put("http.Retry", "1");
         prop.put("http.ReadTimeOut", "30000");
@@ -28,8 +28,8 @@ public class PayPalAccessToken {
     }
 
     public String generateToken() throws PayPalRESTException{
-        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AQEs6xCpYIYfdgMPalU6ZNbA217WAYUzmDygj7ZmglidF_AdTvMh8XD1x-wA",
-                "EHcxsBCpFcOo0M7ioPhsIn25CN3aNCm0Mz6496w-LDGQzRjGKmMEphXKRwa6");
+        OAuthTokenCredential tokenCredential = new OAuthTokenCredential("AWAJZBBp5sW2CpOhPqh-GMgAKuFyr1hdn0wxhZJDBeTor_ij2bLSOOBUbJrG",
+                "EL6DuhA_EBqTvuoHE_YvC71UWH2Tstqf9N76GvDMJlh2rrCYG7qSzlWlO7MY");
 
         return tokenCredential.getAccessToken();
 
