@@ -1,6 +1,8 @@
 package com.xit.apbboard.controller;
 
 import com.xit.apbboard.controller.dto.BulletinListPageResponse;
+import com.xit.apbboard.controller.dto.BulletinUserListResponse;
+import com.xit.apbboard.dao.BoardUsersDAO;
 import com.xit.apbboard.dao.BulletinsDAO;
 import com.xit.apbboard.dao.PricesDAO;
 import com.xit.apbboard.exceptions.PagingBoundsException;
@@ -26,7 +28,7 @@ public class BulletinsController {
     public PricesDAO pricesDAO;
 
     @Autowired
-    public BulletinsDAO bulletinsDAO;
+    public BoardUsersDAO boardUsersDAO;
 
     private static final int BULLETINS_PER_PAGE = 20;
 
@@ -38,12 +40,12 @@ public class BulletinsController {
     }
 
     @RequestMapping(value="/bulletins", method = RequestMethod.GET)
-    public BulletinListPageResponse getFirstPage(){
+    public BulletinUserListResponse getFirstPage(){
         return new BulletinListPageResponse(bulletinsDAO.getPartialList(0, BULLETINS_PER_PAGE, System.currentTimeMillis()), BULLETINS_PER_PAGE, bulletinsDAO.countBulletins(), 0, BULLETINS_PER_PAGE);
     }
 
     @RequestMapping(value="/bulletins/{offset}/{size}", method = RequestMethod.GET)
-    public BulletinListPageResponse getFirstPage(@PathVariable("offset") int offset,
+    public BulletinUserListResponse getFirstPage(@PathVariable("offset") int offset,
                                                  @PathVariable("size") int size){
         validatePagingParams(size, offset,bulletinsDAO.countBulletins());
         return new BulletinListPageResponse(bulletinsDAO.getPartialList(offset, size, System.currentTimeMillis()), BULLETINS_PER_PAGE, bulletinsDAO.countBulletins(), offset, size);

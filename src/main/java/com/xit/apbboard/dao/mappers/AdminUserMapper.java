@@ -1,6 +1,6 @@
 package com.xit.apbboard.dao.mappers;
 
-import com.xit.apbboard.controller.dto.AdminUsersResponse;
+import com.xit.apbboard.controller.dto.AdminUsersListResponse;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -12,18 +12,17 @@ import java.sql.SQLException;
  * @author homer
  * @since 14.09.14.
  */
-public class AdminUserMapper implements RowMapper<AdminUsersResponse> {
+public class AdminUserMapper implements RowMapper<AdminUsersListResponse> {
 
 
     @Override
-    public AdminUsersResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
-        AdminUsersResponse adminUsersResponse = new AdminUsersResponse();
+    public AdminUsersListResponse mapRow(ResultSet rs, int rowNum) throws SQLException {
+        AdminUsersListResponse adminUsersResponse = new AdminUsersListResponse();
         adminUsersResponse.userId = rs.getInt("userId");
         adminUsersResponse.email = rs.getString("email");
         adminUsersResponse.uuid = rs.getString("uuid");
         adminUsersResponse.time = rs.getLong("creationTime");
-        adminUsersResponse.title = rs.getString("bulletinTitle");
-        adminUsersResponse.text = rs.getString("bulletinText");
+        adminUsersResponse.username = rs.getString("username");
         adminUsersResponse.paid = rs.getBoolean("paid");
         adminUsersResponse.posted = rs.getBoolean("posted");
         adminUsersResponse.reward = rs.getDouble("priceInRUR");

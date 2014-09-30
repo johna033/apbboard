@@ -6,13 +6,12 @@ package com.xit.apbboard.controller.dto;
  * @author homer
  * @since 14.09.14.
  */
-public class AdminUsersResponse {
+public class AdminUsersListResponse extends ListPageBase {
     public int userId;
     public String uuid;
     public String email;
     public long time;
-    public String title;
-    public String text;
+    public String username;
     public boolean paid;
     public boolean posted;
     public double reward;

@@ -13,4 +13,5 @@ public class BoardUser {
     public int priceItem;
     public long time;
     public boolean rewardSent;
+    public String username;
 }

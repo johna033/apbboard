@@ -1,6 +1,6 @@
 package com.xit.apbboard.dao;
 
-import com.xit.apbboard.controller.dto.AdminUsersResponse;
+import com.xit.apbboard.controller.dto.AdminUsersListResponse;
 import com.xit.apbboard.dao.mappers.AdminUserMapper;
 import com.xit.apbboard.dao.mappers.RewardInfoMapper;
 import com.xit.apbboard.model.app.UserRewardInfo;
@@ -29,16 +29,18 @@ public class BoardUsersDAO {
 
         HashMap<String, Object> params = new HashMap<>();
         params.put("email", boardUser.email);
+        params.put("username", boardUser.username);
         params.put("uuid", boardUser.uuid);
         params.put("time", boardUser.time);
         params.put("priceItem", boardUser.priceItem);
-        namedParameterJdbcTemplate.update("insert into boardusers (email, uuid, creationTime, priceItem) values (:email, :uuid, :time, :priceItem)",params);
+        namedParameterJdbcTemplate.update("insert into boardusers (email, username, uuid, creationTime, priceItem) values (:email, :username, :uuid, :time, :priceItem)",params);
     }
-
-    public List<AdminUsersResponse> getUsers(){
-       return namedParameterJdbcTemplate.query("select userId, boardusers.uuid, email, creationTime, rewardSent, bulletinText, bulletinTitle," +
-               "paid, posted, priceInRUR from boardusers" +
-               " inner join bulletins on bulletins.uuid = boardusers.uuid " +
+    public void deleteUser(String uuid){
+        namedParameterJdbcTemplate.update("delete from boardusers where uuid=:uuid", Collections.singletonMap("uuid", uuid));
+    }
+    public List<AdminUsersListResponse> getUsers(){
+       return namedParameterJdbcTemplate.query("select userId, uuid, email, username, creationTime, rewardSent, " +
+               "paid, priceInRUR from boardusers"  +
                " inner join prices on boardusers.priceItem = prices.priceid" +
                " order by creationTime desc",
                new HashMap<String, Object>(), new AdminUserMapper());

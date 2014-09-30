@@ -8,8 +8,7 @@ package com.xit.apbboard.controller.dto;
  */
 public class PaymentRequest {
     public String email;
-    public double payment;
-    public int numberOfSymbols;
-    public String text;
-    public String title;
+    public String username;
+    public double price;
+    public double priceInRUR;
 }

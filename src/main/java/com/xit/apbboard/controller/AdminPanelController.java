@@ -1,6 +1,6 @@
 package com.xit.apbboard.controller;
 
-import com.xit.apbboard.controller.dto.AdminUsersResponse;
+import com.xit.apbboard.controller.dto.AdminUsersListResponse;
 import com.xit.apbboard.controller.dto.PostBulletinRequest;
 import com.xit.apbboard.controller.dto.SendRewardRequest;
 import com.xit.apbboard.dao.BoardUsersDAO;
@@ -37,7 +37,7 @@ public class AdminPanelController {
     private static final long BULLETIN_TTL = 30*24*3600*1000L;
 
     @RequestMapping(value = "/clients")
-    public List<AdminUsersResponse> getUsers(){
+    public List<AdminUsersListResponse> getUsers(){
         return boardUsersDAO.getUsers();
     }
 

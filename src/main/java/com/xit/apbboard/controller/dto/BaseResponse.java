@@ -5,14 +5,12 @@ import java.io.Serializable;
 /**
  * Created by
  *
- * @author homer
- * @since 14.09.14.
+ * @author Dmitry Ivanov
+ * @since 30.09.14.
  */
-public class BaseResponse implements Serializable {
-    public String errorDesc;
-
-    public BaseResponse(String errorDesc){
-        this.errorDesc = errorDesc;
+public class BaseResponse implements Serializable{
+    public String error;
+    public BaseResponse(String error) {
+        this.error = error;
     }
-
 }

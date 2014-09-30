@@ -2,32 +2,28 @@ package com.xit.apbboard.controller;
 
 import com.paypal.api.payments.*;
 import com.paypal.core.rest.APIContext;
-import com.paypal.core.rest.OAuthTokenCredential;
 import com.paypal.core.rest.PayPalRESTException;
-import com.paypal.core.rest.PayPalResource;
-import com.xit.apbboard.controller.dto.BaseResponse;
 import com.xit.apbboard.controller.dto.PaymentApprovalLink;
 import com.xit.apbboard.controller.dto.PaymentRequest;
 import com.xit.apbboard.dao.BoardUsersDAO;
-import com.xit.apbboard.dao.BulletinsDAO;
 import com.xit.apbboard.dao.PricesDAO;
 import com.xit.apbboard.exceptions.InvalidPaymentRequestException;
 import com.xit.apbboard.exceptions.PayPalTransactException;
 import com.xit.apbboard.exceptions.PriceItemNotFoundException;
 import com.xit.apbboard.model.db.BoardUser;
-import com.xit.apbboard.model.db.Bulletin;
 import com.xit.apbboard.services.MailNotificationService;
 import com.xit.apbboard.services.PayPalAccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Created by
@@ -46,15 +42,12 @@ public class PayPalController {
     public BoardUsersDAO boardUsersDAO;
 
     @Autowired
-    public BulletinsDAO bulletinsDAO;
-
-    @Autowired
     public MailNotificationService mns;
 
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public PaymentApprovalLink payWithPayPal(@RequestBody PaymentRequest pr, HttpServletResponse httpResponse) {
-        int priceItemId = pricesDAO.getPriceItemId(pr.numberOfSymbols, pr.payment);
+    public PaymentApprovalLink payWithPayPal(@RequestBody PaymentRequest pr) {
+        int priceItemId = pricesDAO.getPriceItemId(pr.price, pr.priceInRUR);
 
         if (priceItemId == 0) {
             throw new PriceItemNotFoundException();
@@ -64,18 +57,15 @@ public class PayPalController {
 
         BoardUser boardUser = new BoardUser();
         boardUser.email = pr.email;
+        boardUser.username = pr.username;
         boardUser.priceItem = priceItemId;
         boardUser.uuid = newBulletinId;
         boardUser.time = System.currentTimeMillis();
 
-        Bulletin bulletin = new Bulletin();
-        bulletin.bulletidText = pr.text;
-        bulletin.bulletinTitle = pr.title;
-        bulletin.uuid = newBulletinId;
+        boardUsersDAO.add(boardUser);
 
-        bulletinsDAO.add(bulletin, boardUser);
         try {
-            Payment payment = createPayment(pr.payment, newBulletinId, "APBBoard: " + pr.numberOfSymbols + " symbols for " + pr.payment + "$");
+            Payment payment = createPayment(pr.price, newBulletinId, "APBBoard: post for " + pr.price + "$");
             boardUsersDAO.setPaymentId(newBulletinId, payment.getId());
             return new PaymentApprovalLink(getApprovalURL(payment));
 
@@ -90,7 +80,7 @@ public class PayPalController {
     @RequestMapping(value = "/final/cancel/{uuid}")
     public void orderCanceled(@PathVariable("uuid") String uuid,
                               HttpServletResponse response) throws IOException {
-        bulletinsDAO.deleteFromBulletinsAndUsers(uuid);
+        boardUsersDAO.deleteUser(uuid);
         response.sendRedirect("/index.html/canceled");
     }
 
@@ -103,7 +93,7 @@ public class PayPalController {
     }
 
     private void validatePaymentRequest(PaymentRequest paymentRequest){
-        if(paymentRequest.email == null){
+        if(paymentRequest.email == null || paymentRequest.username == null){
             throw new InvalidPaymentRequestException();
         }
     }
